@@ -1,25 +1,32 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\StaffAuthController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+// Protected Staff Routes
+Route::middleware("auth:sanctum")->group(function () {
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    Route::delete("/staff/{id}", [StaffController::class, "destroy"]);
+
+    Route::get("/staff", [StaffController::class, "index"]);
+
+    Route::get("/staff/{id}", [StaffController::class, "show"]);
+
+    Route::put("/staff/{id}", [StaffController::class, "update"]);
+
+    Route::post("/staff", [StaffController::class, "store"]);
+
+    Route::get("/staff-me", [StaffAuthController::class, "me"]);
+
+    Route::post("/staff-logout", [StaffAuthController::class, "logout"]);
+
 });
 
-Route::get("/staff", [StaffController::class, "index"]);
-Route::post("/staff", [StaffController::class, "store"]);
-Route::get("/staff/{id}", [StaffController::class, "show"]);
-Route::put("/staff/{id}", [StaffController::class, "update"]);
-Route::delete("/staff/{id}", [StaffController::class, "destroy"]);
+// Customer Routes (Public)
+Route::apiResource("customer", CustomerController::class)
+    ->parameter("customer", "customer");
+
+// Staff Login (Public)
+Route::post("/staff/login", [StaffAuthController::class, "login"]);
