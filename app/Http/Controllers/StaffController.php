@@ -16,8 +16,7 @@ class StaffController extends Controller
 
     public function store(StaffStoreRequest $request)
     {
-        $staff = Staff::create($request->all());
-
+    $staff = Staff::create($request->validated());
         return StaffResource::make($staff);
     }
 
@@ -29,7 +28,8 @@ class StaffController extends Controller
     public function update(StaffUpdateRequest $request, $id)
     {
         $staff = Staff::findOrFail($id);
-        $staff->update($request->all());
+
+        $staff->update($request->validated());
 
         return StaffResource::make($staff);
     }
@@ -38,6 +38,8 @@ class StaffController extends Controller
     {
         Staff::findOrFail($id)->delete();
 
-        return response()->json("Staff member deleted successfully.");
+        return response()->json([
+            'message' => 'Staff member deleted successfully'
+        ]);
     }
 }

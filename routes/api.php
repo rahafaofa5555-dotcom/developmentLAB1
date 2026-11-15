@@ -8,34 +8,40 @@ use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookController;
 
-// Protected Staff Routes
-Route::middleware("auth:sanctum")->group(function () {
-
-    Route::get('/staff-me', [StaffAuthController::class, 'me']);
-
-    Route::post('/staff-logout', [StaffAuthController::class, 'logout']);
-
+// Staff only
+Route::middleware("auth:staff")->group(function () {
+    Route::delete("/staff/{id}", [StaffController::class, "destroy"]);
+    Route::get("/staff", [StaffController::class, "index"]);
     Route::get("/staff/{id}", [StaffController::class, "show"]);
-
     Route::put("/staff/{id}", [StaffController::class, "update"]);
-
     Route::post("/staff", [StaffController::class, "store"]);
-
     Route::get("/staff-me", [StaffAuthController::class, "me"]);
+    Route::post("/staff-logout", [StaffAuthController::class, "logout"]);
 
-    Route::post('/customer-logout', [CustomerAuthController::class, 'logout']);
-
+    Route::post("/category", [CategoryController::class, "store"]);
+    Route::put("/category/{category}", [CategoryController::class, "update"]);
+    Route::delete("/category/{category}", [CategoryController::class, "destroy"]);
+    Route::post("/book", [BookController::class, "store"]);
+    Route::put("/book/{book}", [BookController::class, "update"]);
+    Route::delete("/book/{book}", [BookController::class, "destroy"]);
 });
 
-
-// ANY AUTHENTICATED USER CAN READ
-
-Route::middleware('auth:sanctum')->group(function () {
-
-    Route::get('/category', [CategoryController::class, 'index']);
-    Route::get('/category/{category}', [CategoryController::class, 'show']);
-
-    Route::get('/book', [BookController::class, 'index']);
-    Route::get('/book/{book}', [BookController::class, 'show']);
-
+// Customers only
+Route::middleware("auth:customers")->group(function () {
+    Route::get("/customer-me", [CustomerAuthController::class, "me"]);
+    Route::post("/customer-logout", [CustomerAuthController::class, "logout"]);
+    Route::apiResource("customer", CustomerController::class)
+        ->parameter("customer", "customer");
 });
+
+// Any logged-in user can read
+Route::middleware("auth:sanctum")->group(function () {
+    Route::get("/category", [CategoryController::class, "index"]);
+    Route::get("/category/{category}", [CategoryController::class, "show"]);
+    Route::get("/book", [BookController::class, "index"]);
+    Route::get("/book/{book}", [BookController::class, "show"]);
+});
+
+// Public
+Route::post("/staff/login", [StaffAuthController::class, "login"]);
+Route::post("/customer/login", [CustomerAuthController::class, "login"]);
