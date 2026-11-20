@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CustomerUpdateRequest extends FormRequest
 {
@@ -15,7 +16,9 @@ class CustomerUpdateRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|string|max:255',
-            'phone_number' => 'sometimes|string|max:10|unique:customers,phone_number',
+            // ignore(...) lets a customer keep their own phone number
+            'phone_number' => ['sometimes', 'string', 'max:10',
+                Rule::unique('customers', 'phone_number')->ignore($this->route('customer'))],
             'address' => 'sometimes|string|max:255',
             'password' => 'sometimes|min:8|string',
             'balance' => 'sometimes|integer'

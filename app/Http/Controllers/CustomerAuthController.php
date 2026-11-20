@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Customer;
+use App\Http\Requests\CustomerStoreRequest;
 use Illuminate\Support\Facades\Hash;
 
 class CustomerAuthController extends Controller
@@ -26,12 +27,25 @@ class CustomerAuthController extends Controller
             ], 401);
         }
 
-        $token = $customer->createToken('login-token', ['customer'])->plainTextToken;
+        $token = $customer->createToken('login-token')->plainTextToken;
 
         return response()->json([
             'token' => $token
         ]);
     }
+
+    // Task 1: public sign-up, reuses CustomerStoreRequest for validation
+    public function register(CustomerStoreRequest $request)
+    {
+        $customer = Customer::create($request->validated());
+        $token = $customer->createToken('login-token')->plainTextToken;
+
+        return response()->json([
+            'customer' => $customer,
+            'token' => $token,
+        ], 201);
+    }
+
     public function me()
     {
         return response()->json([

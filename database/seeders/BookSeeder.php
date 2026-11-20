@@ -10,8 +10,6 @@ class BookSeeder extends Seeder
 {
     public function run(): void
     {
-        $novels  = Category::where('name', 'Novels')->first();
-        $science = Category::where('name', 'Science')->first();
         $category = Category::first();
 
         $books = [

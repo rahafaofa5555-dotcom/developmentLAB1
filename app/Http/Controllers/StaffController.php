@@ -16,7 +16,13 @@ class StaffController extends Controller
 
     public function store(StaffStoreRequest $request)
     {
-    $staff = Staff::create($request->validated());
+        // Task 10: only admins manage staff
+        if (auth()->user()->role !== "admin") {
+            return response()->json(["message" => "Only admins can do this"], 403);
+        }
+
+        $staff = Staff::create($request->validated());
+
         return StaffResource::make($staff);
     }
 
@@ -27,6 +33,10 @@ class StaffController extends Controller
 
     public function update(StaffUpdateRequest $request, $id)
     {
+        if (auth()->user()->role !== "admin") {
+            return response()->json(["message" => "Only admins can do this"], 403);
+        }
+
         $staff = Staff::findOrFail($id);
 
         $staff->update($request->validated());
@@ -36,6 +46,10 @@ class StaffController extends Controller
 
     public function destroy($id)
     {
+        if (auth()->user()->role !== "admin") {
+            return response()->json(["message" => "Only admins can do this"], 403);
+        }
+
         Staff::findOrFail($id)->delete();
 
         return response()->json([
