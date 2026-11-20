@@ -39,6 +39,13 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        // Small fix: a category with books can't be deleted (foreign key), so answer 409 instead of 500
+        if ($category->books()->exists()) {
+            return response()->json([
+                'message' => 'This category has books and cannot be deleted'
+            ], 409);
+        }
+
         $category->delete();
 
         return response()->json([
