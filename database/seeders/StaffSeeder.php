@@ -9,12 +9,21 @@ class StaffSeeder extends Seeder
 {
     public function run(): void
     {
-        Staff::create([
+        // updateOrCreate so the seeder can run twice without a "unique" error.
+        // The 'hashed' cast on the Staff model hashes the password.
+        Staff::updateOrCreate(['email' => 'admin@gmail.com'], [
             'name' => 'Admin',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('12345678'),
+            'password' => '12345678',
             'phone_number' => '1434567890',
-            'role' => 'admin'
+            'role' => 'admin',
+        ]);
+
+        // A non-admin, to test Task 10 (should get 403 on POST /api/staff)
+        Staff::updateOrCreate(['email' => 'librarian@gmail.com'], [
+            'name' => 'Librarian',
+            'password' => '12345678',
+            'phone_number' => '1434567891',
+            'role' => 'librarian',
         ]);
     }
 }
