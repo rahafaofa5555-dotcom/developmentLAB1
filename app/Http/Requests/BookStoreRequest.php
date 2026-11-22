@@ -27,4 +27,4 @@ class BookStoreRequest extends FormRequest
     {
         return ['ISBN' => 'ISBN'];
     }
-}
+} 
