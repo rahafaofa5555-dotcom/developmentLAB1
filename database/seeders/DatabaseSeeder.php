@@ -2,21 +2,19 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
+    // php artisan migrate:fresh --seed  runs all of these in order
+    // (categories before books, because books need a category_id)
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $this->call([
+            StaffSeeder::class,
+            CustomerSeeder::class,
+            CategorySeeder::class,
+            BookSeeder::class,
+        ]);
     }
 }
